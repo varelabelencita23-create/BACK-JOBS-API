@@ -2,6 +2,8 @@ package com.uap.proiv.jobs.client;
 
 import com.uap.proiv.jobs.dto.User;
 import com.uap.proiv.jobs.dto.UserApiResponse;
+import com.uap.proiv.jobs.dto.UserRequest;
+import com.uap.proiv.jobs.dto.CreatedUser;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -114,6 +116,30 @@ public class UserApiRepository {
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al conectar con la API de usuarios: " + e.getMessage(), e);
+        }
+    }
+
+    public CreatedUser addUser(UserRequest user) {
+        try {
+            String payload = objectMapper.writeValueAsString(user);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl))
+                    .header("Accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .header("X-API-KEY", apiKey)
+                    .POST(HttpRequest.BodyPublishers.ofString(payload))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+            if (response.statusCode() == 201) {
+                return objectMapper.readValue(response.body(), CreatedUser.class);
+            }
+            throw new RuntimeException("Error en ReqRes API. Código: " + response.statusCode());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al registrar usuario en ReqRes: " + e.getMessage(), e);
         }
     }
 

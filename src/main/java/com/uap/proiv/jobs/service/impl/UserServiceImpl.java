@@ -3,6 +3,8 @@ package com.uap.proiv.jobs.service.impl;
 import com.uap.proiv.jobs.client.UserApiRepository;
 import com.uap.proiv.jobs.dto.User;
 import com.uap.proiv.jobs.dto.UserApiResponse;
+import com.uap.proiv.jobs.dto.UserRequest;
+import com.uap.proiv.jobs.dto.CreatedUser;
 import com.uap.proiv.jobs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +44,13 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public CreatedUser addUser(UserRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("El request es obligatorio");
+        }
+        return userApiRepository.addUser(request);
     }
 }

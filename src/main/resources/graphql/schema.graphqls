@@ -1,9 +1,11 @@
 type Query {
     assigneds(request: AssignRequest): [UserJobAssigned]
     userById(id:ID): User
+    jobById(id: ID!): Job
 }
 type Mutation {
     addJob(request: JobRequest): Job
+    addUser(request: UserRequest): CreatedUser
 }
 
 type UserJobAssigned {
@@ -26,6 +28,18 @@ type Job {
     hours:Float
     id:ID
     resources:Float
+}
+
+input UserRequest {
+    name: String!
+    job: String!
+}
+
+type CreatedUser {
+    id: ID!
+    name: String!
+    job: String!
+    createdAt: String!
 }
 
 input AssignRequest {

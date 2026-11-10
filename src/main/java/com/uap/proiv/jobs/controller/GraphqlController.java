@@ -13,6 +13,8 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import com.uap.proiv.jobs.dto.CreatedUser;
+import com.uap.proiv.jobs.dto.UserRequest;
 
 @Controller
 public class GraphqlController {
@@ -39,6 +41,15 @@ public class GraphqlController {
         return userService.searchById(id);
     }
 
+    @QueryMapping
+    public Job jobById(@Argument String id) {
+        try {
+            return jobService.getJobById(Integer.parseInt(id));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El id del trabajo debe ser numérico", e);
+        }
+    }
+
     @SchemaMapping(typeName = "User", field = "job")
     public Job job(User user) {
         return jobService.getJobById(user.getJobId());
@@ -47,6 +58,11 @@ public class GraphqlController {
     @MutationMapping
     public Job addJob(@Argument JobRequest request) {
         return jobService.add(request);
+    }
+
+    @MutationMapping
+    public CreatedUser addUser(@Argument UserRequest request) {
+        return userService.addUser(request);
     }
 
 }
